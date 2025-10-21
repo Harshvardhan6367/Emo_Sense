@@ -1,0 +1,15 @@
+{
+  "name": "ai_emo",
+  "version": "1.0.0",
+  "main": "ai.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "dotenv": "^17.2.3",
+    "readline": "^1.3.0"
+  }
+}
