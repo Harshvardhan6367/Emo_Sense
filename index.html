@@ -1,0 +1,1022 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EmoSense AI | Mental Wellness Companion</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary: #6C63FF;
+            --primary-light: #8A85FF;
+            --primary-dark: #5752D2;
+            --secondary: #36D1DC;
+            --accent: #FF6B6B;
+            --success: #4ECDC4;
+            --warning: #FFD166;
+            --text: #2D3748;
+            --text-light: #718096;
+            --bg: #F7FAFC;
+            --bg-card: #FFFFFF;
+            --bg-gradient: linear-gradient(135deg, #6C63FF 0%, #36D1DC 100%);
+            --shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+            --shadow-hover: 0 15px 35px rgba(0, 0, 0, 0.1);
+            --radius: 16px;
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .app-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            gap: 25px;
+            min-height: 100vh;
+        }
+
+        @media (max-width: 1100px) {
+            .app-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Header Styles */
+        header {
+            grid-column: 1 / -1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            margin-bottom: 20px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 45px;
+            height: 45px;
+            background: var(--bg-gradient);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+        }
+
+        .logo-text h1 {
+            font-size: 28px;
+            font-weight: 700;
+            background: var(--bg-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .logo-text p {
+            font-size: 14px;
+            color: var(--text-light);
+        }
+
+        .user-actions {
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border-radius: 50px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: var(--bg-gradient);
+            color: white;
+            box-shadow: var(--shadow);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--primary);
+            border: 1px solid var(--primary);
+        }
+
+        .btn-outline:hover {
+            background: rgba(108, 99, 255, 0.05);
+        }
+
+        /* Card Styles */
+        .card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 25px;
+            transition: var(--transition);
+            height: 100%;
+        }
+
+        .card:hover {
+            box-shadow: var(--shadow-hover);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .card-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-title i {
+            color: var(--primary);
+        }
+
+        /* Monitoring Section */
+        .monitoring-section {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .video-container {
+            position: relative;
+            width: 100%;
+            border-radius: var(--radius);
+            overflow: hidden;
+            background: #000;
+            aspect-ratio: 4/3;
+        }
+
+        #video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .video-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .video-overlay.hidden {
+            display: none;
+        }
+
+        .controls {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .status-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .status-card {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+
+        .status-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .status-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 12px;
+            font-size: 20px;
+        }
+
+        .status-icon.expression {
+            background: rgba(108, 99, 255, 0.1);
+            color: var(--primary);
+        }
+
+        .status-icon.audio {
+            background: rgba(54, 209, 220, 0.1);
+            color: var(--secondary);
+        }
+
+        .status-icon.stress {
+            background: rgba(255, 107, 107, 0.1);
+            color: var(--accent);
+        }
+
+        .status-icon.overall {
+            background: rgba(78, 205, 196, 0.1);
+            color: var(--success);
+        }
+
+        .status-value {
+            font-size: 18px;
+            font-weight: 700;
+            margin: 5px 0;
+        }
+
+        .status-label {
+            font-size: 14px;
+            color: var(--text-light);
+        }
+
+        /* Emotional State Display */
+        .emotional-state {
+            padding: 25px;
+            border-radius: var(--radius);
+            text-align: center;
+            transition: var(--transition);
+            margin-top: 20px;
+        }
+
+        .emotional-state.calm {
+            background: linear-gradient(135deg, rgba(78, 205, 196, 0.15), rgba(78, 205, 196, 0.05));
+            border-left: 5px solid var(--success);
+        }
+
+        .emotional-state.stressed {
+            background: linear-gradient(135deg, rgba(255, 107, 107, 0.15), rgba(255, 107, 107, 0.05));
+            border-left: 5px solid var(--accent);
+        }
+
+        .emotional-state.sad {
+            background: linear-gradient(135deg, rgba(54, 209, 220, 0.15), rgba(54, 209, 220, 0.05));
+            border-left: 5px solid var(--secondary);
+        }
+
+        .emotional-state.neutral {
+            background: linear-gradient(135deg, rgba(108, 99, 255, 0.15), rgba(108, 99, 255, 0.05));
+            border-left: 5px solid var(--primary);
+        }
+
+        .state-icon {
+            font-size: 40px;
+            margin-bottom: 15px;
+        }
+
+        .state-title {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .state-description {
+            color: var(--text-light);
+            max-width: 80%;
+            margin: 0 auto;
+        }
+
+        /* Intervention Section */
+        .intervention-section {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .intervention-recommendation {
+            background: linear-gradient(135deg, var(--primary-light), var(--primary));
+            color: white;
+            border-radius: var(--radius);
+            padding: 25px;
+            margin-bottom: 10px;
+        }
+
+        .recommendation-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .recommendation-text {
+            opacity: 0.9;
+            line-height: 1.6;
+        }
+
+        .intervention-options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .intervention-card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            transition: var(--transition);
+            cursor: pointer;
+            box-shadow: var(--shadow);
+            border: 1px solid transparent;
+        }
+
+        .intervention-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+            border-color: var(--primary-light);
+        }
+
+        .intervention-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+            font-size: 28px;
+            color: white;
+        }
+
+        .intervention-icon.breathing {
+            background: var(--success);
+        }
+
+        .intervention-icon.sounds {
+            background: var(--secondary);
+        }
+
+        .intervention-icon.affirmations {
+            background: var(--primary);
+        }
+
+        .intervention-icon.mindfulness {
+            background: var(--warning);
+            color: var(--text);
+        }
+
+        .intervention-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .intervention-description {
+            color: var(--text-light);
+            font-size: 14px;
+        }
+
+        /* Activity History */
+        .activity-history {
+            margin-top: 20px;
+        }
+
+        .history-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .history-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .history-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            background: var(--bg);
+            border-radius: 12px;
+            transition: var(--transition);
+        }
+
+        .history-item:hover {
+            background: rgba(108, 99, 255, 0.05);
+        }
+
+        .history-time {
+            font-size: 14px;
+            color: var(--text-light);
+            min-width: 70px;
+        }
+
+        .history-content {
+            flex: 1;
+        }
+
+        .history-type {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .history-desc {
+            font-size: 14px;
+            color: var(--text-light);
+        }
+
+        /* Breathing Animation */
+        .breathing-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .breathing-circle {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: var(--success);
+            margin: 20px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 18px;
+            font-weight: 700;
+            animation: breathe 8s infinite ease-in-out;
+        }
+
+        @keyframes breathe {
+            0%, 100% { transform: scale(0.8); opacity: 0.7; }
+            50% { transform: scale(1.2); opacity: 1; }
+        }
+
+        .breathing-text {
+            font-size: 24px;
+            font-weight: 700;
+            margin: 20px 0;
+            color: var(--primary);
+        }
+
+        .breathing-instruction {
+            color: var(--text-light);
+            max-width: 80%;
+            margin: 0 auto 20px;
+        }
+
+        /* Footer */
+        footer {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 30px 0 10px;
+            color: var(--text-light);
+            font-size: 14px;
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+            margin-top: 20px;
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .app-container {
+                padding: 15px;
+                gap: 20px;
+            }
+            
+            .status-grid, .intervention-options {
+                grid-template-columns: 1fr;
+            }
+            
+            header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+            
+            .controls {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <header>
+            <div class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-brain"></i>
+                </div>
+                <div class="logo-text">
+                    <h1>EmoSense AI</h1>
+                    <p>Your mental wellness companion</p>
+                </div>
+            </div>
+            <div class="user-actions">
+                <button class="btn btn-outline">
+                    <i class="fas fa-chart-line"></i> Insights
+                </button>
+                <button class="btn btn-outline">
+                    <i class="fas fa-cog"></i> Settings
+                </button>
+                <button class="btn btn-primary" id="startBtn">
+                    <i class="fas fa-play"></i> Start Session
+                </button>
+            </div>
+        </header>
+
+        <!-- Monitoring Section -->
+        <section class="monitoring-section">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title"><i class="fas fa-heartbeat"></i> Real-time Monitoring</h2>
+                    <div class="status-indicator">
+                        <span class="status-dot"></span>
+                        <span id="statusText">Ready</span>
+                    </div>
+                </div>
+                
+                <div class="video-container">
+                    <video id="video" autoplay muted></video>
+                    <div class="video-overlay" id="videoOverlay">
+                        <i class="fas fa-camera" style="font-size: 48px; margin-bottom: 15px;"></i>
+                        <h3>Ready to Start Monitoring</h3>
+                        <p>Click "Start Session" to begin analysis</p>
+                    </div>
+                </div>
+                
+                <div class="controls">
+                    <button class="btn btn-primary" id="startMonitoringBtn" style="display: none;">
+                        <i class="fas fa-play-circle"></i> Start Monitoring
+                    </button>
+                    <button class="btn btn-outline" id="stopBtn" disabled>
+                        <i class="fas fa-stop-circle"></i> Stop
+                    </button>
+                </div>
+            </div>
+            
+            <div class="status-grid">
+                <div class="status-card">
+                    <div class="status-icon expression">
+                        <i class="far fa-smile"></i>
+                    </div>
+                    <div class="status-value" id="expressionValue">-</div>
+                    <div class="status-label">Facial Expression</div>
+                </div>
+                
+                <div class="status-card">
+                    <div class="status-icon audio">
+                        <i class="fas fa-microphone"></i>
+                    </div>
+                    <div class="status-value" id="audioValue">-</div>
+                    <div class="status-label">Voice Analysis</div>
+                </div>
+                
+                <div class="status-card">
+                    <div class="status-icon stress">
+                        <i class="fas fa-tachometer-alt"></i>
+                    </div>
+                    <div class="status-value" id="stressValue">-</div>
+                    <div class="status-label">Stress Level</div>
+                </div>
+                
+                <div class="status-card">
+                    <div class="status-icon overall">
+                        <i class="fas fa-chart-pie"></i>
+                    </div>
+                    <div class="status-value" id="overallState">-</div>
+                    <div class="status-label">Overall State</div>
+                </div>
+            </div>
+            
+            <div class="emotional-state neutral" id="emotionalState">
+                <div class="state-icon">
+                    <i class="fas fa-balance-scale"></i>
+                </div>
+                <div class="state-title">Balanced State</div>
+                <div class="state-description">Your emotional indicators are within normal ranges. Continue maintaining your wellness practices.</div>
+            </div>
+        </section>
+
+        <!-- Intervention Section -->
+        <section class="intervention-section">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title"><i class="fas fa-hands-helping"></i> Personalized Support</h2>
+                </div>
+                
+                <div class="intervention-recommendation">
+                    <div class="recommendation-title">
+                        <i class="fas fa-lightbulb"></i> Recommendation
+                    </div>
+                    <div class="recommendation-text" id="recommendationText">
+                        Start monitoring to receive personalized mental wellness recommendations based on your current state.
+                    </div>
+                </div>
+                
+                <div class="intervention-options">
+                    <div class="intervention-card" onclick="startBreathingExercise()">
+                        <div class="intervention-icon breathing">
+                            <i class="fas fa-wind"></i>
+                        </div>
+                        <div class="intervention-title">Breathing Exercise</div>
+                        <div class="intervention-description">Guided 4-7-8 breathing to calm your nervous system</div>
+                    </div>
+                    
+                    <div class="intervention-card" onclick="playCalmingSounds()">
+                        <div class="intervention-icon sounds">
+                            <i class="fas fa-music"></i>
+                        </div>
+                        <div class="intervention-title">Calming Sounds</div>
+                        <div class="intervention-description">Soothing nature sounds and ambient music</div>
+                    </div>
+                    
+                    <div class="intervention-card" onclick="showPositiveAffirmations()">
+                        <div class="intervention-icon affirmations">
+                            <i class="fas fa-heart"></i>
+                        </div>
+                        <div class="intervention-title">Positive Affirmations</div>
+                        <div class="intervention-description">Personalized encouraging messages</div>
+                    </div>
+                    
+                    <div class="intervention-card" onclick="suggestMindfulBreak()">
+                        <div class="intervention-icon mindfulness">
+                            <i class="fas fa-spa"></i>
+                        </div>
+                        <div class="intervention-title">Mindful Break</div>
+                        <div class="intervention-description">Quick 2-minute mindfulness practice</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card activity-history">
+                <div class="history-title">
+                    <i class="fas fa-history"></i> Recent Activity
+                </div>
+                <div class="history-list" id="activityList">
+                    <div class="history-item">
+                        <div class="history-time">10:30 AM</div>
+                        <div class="history-content">
+                            <div class="history-type">Session Started</div>
+                            <div class="history-desc">Began monitoring emotional state</div>
+                        </div>
+                    </div>
+                    <div class="history-item">
+                        <div class="history-time">Yesterday</div>
+                        <div class="history-content">
+                            <div class="history-type">Breathing Exercise</div>
+                            <div class="history-desc">Completed 5-minute calming session</div>
+                        </div>
+                    </div>
+                    <div class="history-item">
+                        <div class="history-time">2 days ago</div>
+                        <div class="history-content">
+                            <div class="history-type">Mindfulness</div>
+                            <div class="history-desc">Practiced 10-minute guided meditation</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <footer>
+            <p>EmoSense AI | Your privacy is our priority. All data is processed locally on your device.</p>
+            <p>This tool is for support purposes only and is not a substitute for professional medical advice.</p>
+        </footer>
+    </div>
+
+    <script>
+        // DOM Elements
+        const video = document.getElementById('video');
+        const videoOverlay = document.getElementById('videoOverlay');
+        const startBtn = document.getElementById('startBtn');
+        const startMonitoringBtn = document.getElementById('startMonitoringBtn');
+        const stopBtn = document.getElementById('stopBtn');
+        const statusText = document.getElementById('statusText');
+        const statusDot = document.querySelector('.status-dot');
+        const expressionValue = document.getElementById('expressionValue');
+        const audioValue = document.getElementById('audioValue');
+        const stressValue = document.getElementById('stressValue');
+        const overallState = document.getElementById('overallState');
+        const emotionalState = document.getElementById('emotionalState');
+        const recommendationText = document.getElementById('recommendationText');
+        const activityList = document.getElementById('activityList');
+
+        // Application State
+        let isMonitoring = false;
+        let mediaStream = null;
+
+        // Emotional states configuration
+        const emotionalStates = {
+            calm: {
+                icon: 'fas fa-smile',
+                title: 'Calm State',
+                description: 'Your emotional indicators show a balanced and relaxed state. Maintain your current wellness practices.',
+                color: 'calm',
+                recommendation: 'Continue with your current routine. Consider a brief mindfulness session to maintain this state.'
+            },
+            stressed: {
+                icon: 'fas fa-tachometer-alt',
+                title: 'Heightened Stress',
+                description: 'We\'re detecting signs of elevated stress. Consider trying a breathing exercise or calming sounds.',
+                color: 'stressed',
+                recommendation: 'Immediate breathing exercise recommended. Follow with calming sounds to reduce stress levels.'
+            },
+            sad: {
+                icon: 'fas fa-cloud',
+                title: 'Low Mood Detected',
+                description: 'Your indicators suggest a lower mood. Positive affirmations or a mindful break might help.',
+                color: 'sad',
+                recommendation: 'Try positive affirmations followed by a gentle breathing exercise to uplift your mood.'
+            },
+            neutral: {
+                icon: 'fas fa-balance-scale',
+                title: 'Balanced State',
+                description: 'Your emotional indicators are within normal ranges. Continue maintaining your wellness practices.',
+                color: 'neutral',
+                recommendation: 'All support options are available. Consider preventive practices to maintain balance.'
+            }
+        };
+
+        // Start session function
+        startBtn.addEventListener('click', async () => {
+            try {
+                // Request camera and microphone access
+                mediaStream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { width: 640, height: 480 }, 
+                    audio: true 
+                });
+                
+                // Show the video and hide overlay
+                video.srcObject = mediaStream;
+                videoOverlay.classList.add('hidden');
+                startMonitoringBtn.style.display = 'block';
+                startBtn.disabled = true;
+                
+                // Update status
+                updateStatus('Ready to monitor', 'ready');
+                
+                // Add to activity log
+                addActivity('Session Prepared', 'Camera and microphone access granted');
+                
+            } catch (error) {
+                console.error('Error accessing media devices:', error);
+                alert('Could not access camera or microphone. Please ensure you have granted the necessary permissions.');
+            }
+        });
+
+        // Start monitoring function
+        startMonitoringBtn.addEventListener('click', () => {
+            isMonitoring = true;
+            startMonitoringBtn.style.display = 'none';
+            stopBtn.disabled = false;
+            
+            // Update status
+            updateStatus('Monitoring Active', 'active');
+            
+            // Add to activity log
+            addActivity('Monitoring Started', 'Began real-time emotional analysis');
+            
+            // Start simulated emotional state changes for demo purposes
+            simulateEmotionalChanges();
+        });
+
+        // Stop monitoring function
+        stopBtn.addEventListener('click', () => {
+            isMonitoring = false;
+            startMonitoringBtn.style.display = 'block';
+            stopBtn.disabled = true;
+            
+            // Update status
+            updateStatus('Monitoring Paused', 'paused');
+            
+            // Add to activity log
+            addActivity('Monitoring Paused', 'Temporarily stopped analysis');
+            
+            // Reset emotional state display
+            updateEmotionalState('neutral');
+        });
+
+        // Update status indicator
+        function updateStatus(text, state) {
+            statusText.textContent = text;
+            statusDot.style.background = 
+                state === 'active' ? '#4ECDC4' : 
+                state === 'ready' ? '#FFD166' : 
+                state === 'paused' ? '#FF6B6B' : '#718096';
+        }
+
+        // Update emotional state display
+        function updateEmotionalState(state) {
+            const stateConfig = emotionalStates[state];
+            
+            // Update emotional state card
+            emotionalState.className = `emotional-state ${stateConfig.color}`;
+            emotionalState.innerHTML = `
+                <div class="state-icon">
+                    <i class="${stateConfig.icon}"></i>
+                </div>
+                <div class="state-title">${stateConfig.title}</div>
+                <div class="state-description">${stateConfig.description}</div>
+            `;
+            
+            // Update recommendation
+            recommendationText.textContent = stateConfig.recommendation;
+            
+            // Update status values with simulated data
+            const expressions = ['Happy', 'Neutral', 'Sad', 'Angry', 'Surprised'];
+            const audioStates = ['Calm', 'Normal', 'Excited', 'Slow'];
+            
+            expressionValue.textContent = expressions[Math.floor(Math.random() * expressions.length)];
+            audioValue.textContent = audioStates[Math.floor(Math.random() * audioStates.length)];
+            stressValue.textContent = `${Math.floor(Math.random() * 30) + (state === 'stressed' ? 60 : 30)}%`;
+            overallState.textContent = stateConfig.title;
+        }
+
+        // Simulate emotional state changes for demo
+        function simulateEmotionalChanges() {
+            if (!isMonitoring) return;
+            
+            const states = ['calm', 'stressed', 'sad', 'neutral'];
+            const randomState = states[Math.floor(Math.random() * states.length)];
+            
+            updateEmotionalState(randomState);
+            
+            // Continue simulation if still monitoring
+            if (isMonitoring) {
+                setTimeout(simulateEmotionalChanges, 8000);
+            }
+        }
+
+        // Add activity to history
+        function addActivity(type, description) {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            
+            const activityItem = document.createElement('div');
+            activityItem.className = 'history-item';
+            activityItem.innerHTML = `
+                <div class="history-time">${timeString}</div>
+                <div class="history-content">
+                    <div class="history-type">${type}</div>
+                    <div class="history-desc">${description}</div>
+                </div>
+            `;
+            
+            activityList.prepend(activityItem);
+            
+            // Keep only the last 5 activities
+            if (activityList.children.length > 5) {
+                activityList.removeChild(activityList.lastChild);
+            }
+        }
+
+        // Intervention Functions
+        function startBreathingExercise() {
+            addActivity('Breathing Exercise', 'Started 4-7-8 breathing technique');
+            
+            // Create breathing exercise modal
+            const breathingModal = document.createElement('div');
+            breathingModal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.8);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 1000;
+            `;
+            
+            breathingModal.innerHTML = `
+                <div class="card" style="max-width: 500px; margin: 20px; text-align: center;">
+                    <div class="breathing-container">
+                        <h2 class="card-title"><i class="fas fa-wind"></i> Breathing Exercise</h2>
+                        <p class="breathing-instruction">Follow the circle as it expands and contracts. Breathe in as it grows, and out as it shrinks.</p>
+                        <div class="breathing-circle">Breathe</div>
+                        <div class="breathing-text" id="breathText">Breathe In</div>
+                        <p>This 4-7-8 technique helps calm your nervous system and reduce stress.</p>
+                        <button class="btn btn-primary" onclick="this.closest('.card').parentElement.remove()" style="margin-top: 20px;">
+                            <i class="fas fa-check"></i> Finish Exercise
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(breathingModal);
+            
+            // Breathing animation logic
+            let breathPhase = 0;
+            const breathPhases = ['Breathe In', 'Hold', 'Breathe Out', 'Hold'];
+            const breathInterval = setInterval(() => {
+                const breathText = document.getElementById('breathText');
+                breathPhase = (breathPhase + 1) % 4;
+                breathText.textContent = breathPhases[breathPhase];
+            }, 4000);
+            
+            // Clear interval when modal is closed
+            breathingModal.addEventListener('click', (e) => {
+                if (e.target === breathingModal) {
+                    clearInterval(breathInterval);
+                    breathingModal.remove();
+                }
+            });
+        }
+
+        function playCalmingSounds() {
+            addActivity('Calming Sounds', 'Started soothing audio environment');
+            alert('In a full implementation, calming sounds would play here. For this demo, imagine gentle rain and nature sounds.');
+        }
+
+        function showPositiveAffirmations() {
+            addActivity('Positive Affirmations', 'Viewed encouraging messages');
+            
+            const affirmations = [
+                "You are capable and strong.",
+                "This moment is temporary, and you will get through it.",
+                "You deserve happiness and peace.",
+                "Your feelings are valid and important.",
+                "You are doing the best you can, and that is enough.",
+                "Every breath is a new beginning.",
+                "You have overcome challenges before, and you will overcome this too."
+            ];
+            
+            const randomAffirmation = affirmations[Math.floor(Math.random() * affirmations.length)];
+            alert(`Affirmation: ${randomAffirmation}`);
+        }
+
+        function suggestMindfulBreak() {
+            addActivity('Mindful Break', 'Started 2-minute mindfulness practice');
+            alert('In a full implementation, a guided mindfulness exercise would begin. Take a moment to notice your surroundings and breathe deeply.');
+        }
+
+        // Initialize the application
+        window.addEventListener('load', () => {
+            console.log('EmoSense AI initialized');
+            updateStatus('Ready to start', 'ready');
+        });
+    </script>
+</body>
+</html>
